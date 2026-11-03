@@ -1,0 +1,602 @@
+<title>Europa 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Limelight&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: phone-first single column; white paper with retro travel-poster cards per city; sticky tabs Hoy / Itinerario / Reservas */
+:root{
+  --paper:#FFFFFF;
+  --ink:#1F3B57;
+  --ink-2:#556A80;
+  --ink-3:#2D4E70;
+  --mustard:#E8B04A;
+  --terra:#C8553D;
+  --cream:#FBF3E6;
+  --cream-2:#D8CCB6;
+  --sea:#2F6F7E;
+  --olive:#5E7B45;
+  --line:#E9DFCF;
+  --warn-bg:#FCEFD3;
+  --warn-ink:#7A4E0E;
+  --info-bg:#E3EFEF;
+  --info-ink:#1E5260;
+  --display:'Limelight', Georgia, 'Times New Roman', serif;
+  --body:'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 56px}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--terra);outline-offset:2px;border-radius:6px}
+
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--terra);margin:0}
+.top h1{font-family:var(--display);font-weight:400;font-size:44px;line-height:1;margin:6px 0 4px;letter-spacing:.01em;text-wrap:balance}
+.top .sub{margin:0;color:var(--ink-2);font-size:14px}
+.ribbon{display:flex;gap:3px;margin:16px 0 6px}
+.ribbon span{flex:1;height:6px;border-radius:3px;opacity:.3}
+.ribbon span.done{opacity:1}
+.ribbon span.now{opacity:1;outline:2px solid var(--ink);outline-offset:1px}
+.ribbon-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin:0}
+
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);display:flex;gap:4px;margin:18px 0 18px;padding:8px 0;border-bottom:1px solid var(--line)}
+.tabs a{text-decoration:none;font-weight:600;font-size:14px;padding:7px 14px;border-radius:999px;color:var(--ink-2)}
+.tabs a[aria-current="page"]{background:var(--ink);color:var(--cream)}
+
+.next{background:var(--ink);color:var(--cream);border-radius:18px;padding:18px 18px 16px;display:grid;gap:6px}
+.next .eyebrow{color:var(--mustard)}
+.next .count{font-size:38px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.next .what{font-size:18px;font-weight:600;margin:0}
+.next .when{font-size:13.5px;color:var(--cream-2);margin:0}
+.next .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;background:var(--ink-3);color:var(--cream);border:0;text-decoration:none;cursor:pointer}
+.chip.gold{background:var(--mustard);color:var(--ink)}
+.chip .mono{font-family:var(--mono);font-weight:500;letter-spacing:.04em}
+
+.days{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;margin:22px -2px 14px;scrollbar-width:thin}
+.day{flex:0 0 auto;min-width:54px;border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:7px 6px 6px;text-align:center;cursor:pointer;position:relative}
+.day .dw{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.day .dn{display:block;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.day .bar{display:block;height:4px;border-radius:2px;margin-top:4px}
+.day[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.day[aria-pressed="true"] .dw{color:var(--cream-2)}
+.day .today{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--terra)}
+
+.poster{position:relative;border-radius:18px;overflow:hidden;height:180px;background:var(--cream)}
+.poster svg{display:block;width:100%;height:100%}
+.poster .d{position:absolute;top:12px;left:12px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;background:var(--ink);color:var(--cream);padding:4px 9px;border-radius:999px}
+.poster .n{position:absolute;left:16px;right:16px;bottom:8px;color:var(--cream);font-family:var(--display);font-size:36px;line-height:1;letter-spacing:.02em}
+.poster.sm{height:128px}
+.poster.sm .n{font-size:30px}
+.route{margin:10px 0 0;font-weight:600;font-size:15px}
+.route small{display:block;font-weight:400;color:var(--ink-2);font-size:13px}
+
+.evs{display:grid;gap:14px;margin-top:16px}
+.ev{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px}
+.tm{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px;padding:9px 10px 0 0;border-right:2px dotted var(--line);text-align:right;line-height:1.25}
+.tm small{display:block;font-weight:500;font-size:11px;color:var(--ink-2);margin-top:2px}
+.body{min-width:0}
+
+.pass{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--paper)}
+.pass-top{background:var(--terra);color:var(--cream);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.leg{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:12px 12px 10px}
+.pt b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1;display:block;letter-spacing:.03em}
+.pt small{display:block;color:var(--ink-2);font-size:12px;line-height:1.3;margin-top:2px}
+.pt span{display:block;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px;margin-top:3px}
+.pt span em{font-style:normal;font-weight:500;color:var(--ink-2);font-size:12px}
+.pt sup{color:var(--terra);font-size:11px;font-weight:700}
+.pt.r{text-align:right}
+.leg .mid{color:var(--terra);display:flex}
+.leg-no{font-size:11.5px;color:var(--ink-2);padding:0 12px;margin-top:-4px;letter-spacing:.03em}
+.conn{margin:8px 12px 0;padding:6px 10px;background:var(--warn-bg);color:var(--warn-ink);border-radius:8px;font-size:12.5px;font-weight:500}
+.tear{position:relative;border-top:2px dashed var(--line);margin:12px 12px 0}
+.tear::before,.tear::after{content:"";position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--paper);border:1px solid var(--line)}
+.tear::before{left:-21px}.tear::after{right:-21px}
+.pass-bot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px 12px;font-size:12.5px;color:var(--ink-2)}
+.lbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--ink-2)}
+.code{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.05em;background:var(--cream);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px 9px;display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.code.done{background:var(--olive);color:var(--cream);border-color:var(--olive)}
+.notes{list-style:none;margin:0;padding:0 12px 12px;font-size:13px;color:var(--ink-2);display:grid;gap:3px}
+.notes li{padding-left:12px;position:relative}
+.notes li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--mustard)}
+
+.stay{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px}
+.stay-h{display:flex;gap:10px;align-items:flex-start}
+.ic{flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--mustard);color:var(--ink)}
+.stay-h b{display:block;font-size:16px;line-height:1.3}
+.stay-h small{display:block;font-size:12.5px;color:var(--ink-2)}
+.stay dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}
+.stay dt{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--ink-2)}
+.stay dd{margin:0;font-weight:600;font-size:13.5px}
+.map{display:inline-flex;gap:6px;align-items:flex-start;color:var(--terra);font-weight:600;text-decoration:none;font-size:13.5px;line-height:1.35}
+.map:hover{text-decoration:underline}
+.stay .notes{padding:0}
+.via{font-size:12px;color:var(--ink-2)}
+
+.box{border-radius:12px;padding:10px 12px;display:flex;gap:10px;font-size:13.5px;line-height:1.45}
+.box svg{flex:0 0 auto;margin-top:1px}
+.box b{font-weight:700}
+.warn{background:var(--warn-bg);color:var(--warn-ink)}
+.info{background:var(--info-bg);color:var(--info-ink)}
+.act{padding:8px 0 0}
+.act b{display:block;font-size:15px}
+.act span{display:block;font-size:13.5px;color:var(--ink-2)}
+.out{padding:8px 0 0;display:flex;gap:8px;align-items:flex-start;font-weight:600;font-size:14px;color:var(--ink-2)}
+.out small{display:block;font-weight:400;font-size:13px}
+.plan{padding:7px 0 0;display:grid;gap:2px}
+.plan b{font-size:15.5px;line-height:1.35}
+.plan>span{font-size:13.5px;color:var(--ink-2)}
+.map.sm{font-size:12.5px;margin-top:2px}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-left:4px;vertical-align:2px;white-space:nowrap}
+.t-imp{background:var(--terra);color:var(--cream)}
+.t-ent{background:var(--mustard);color:var(--ink)}
+.t-free{background:var(--olive);color:var(--cream)}
+.t-out{background:var(--info-bg);color:var(--info-ink)}
+.t-opt{background:var(--line);color:var(--ink-2)}
+.move{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-2);padding:7px 10px;border:1px dashed var(--cream-2);border-radius:10px;margin-top:2px}
+.prep{display:grid;gap:2px}
+.seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--cream);border:1px solid var(--line);margin:0 0 16px;width:fit-content;max-width:100%}
+.seg button{border:0;background:transparent;font-weight:700;font-size:13.5px;padding:7px 14px;border-radius:999px;cursor:pointer;color:var(--ink-2)}
+.seg button[aria-selected="true"]{background:var(--terra);color:var(--cream)}
+.rlink{margin-top:6px}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+.chk input{margin-top:3px;width:18px;height:18px;accent-color:var(--terra);flex:0 0 auto}
+.chk input:checked+span{color:var(--ink-2);text-decoration:line-through}
+
+.ticket{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ticket .pass-top{background:var(--mustard);color:var(--ink)}
+.ticket .tk{padding:12px 12px 4px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ticket .tk b{font-size:16px;flex:1 1 180px}
+
+.all{display:grid;gap:40px}
+.res h2{font-family:var(--display);font-weight:400;font-size:26px;margin:28px 0 6px;letter-spacing:.01em}
+.res h2:first-child{margin-top:0}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.row b{display:block;font-size:15px}
+.row small{display:block;font-size:12.5px;color:var(--ink-2)}
+.row .map{font-size:12.5px;margin-top:3px}
+.foot{margin-top:36px;font-size:12px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:12px}
+@media (max-width:380px){.top h1{font-size:38px}.pt b{font-size:26px}.next .count{font-size:32px}}
+@media (prefers-reduced-motion:no-preference){.code,.chip,.day{transition:background-color .15s,color .15s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">6 – 16 de noviembre de 2026</p>
+    <h1>Europa 2026</h1>
+    <p class="sub">Madrid · Bilbao · París · Disneyland · Mónaco · Niza</p>
+    <div class="ribbon" id="ribbon" aria-hidden="true"></div>
+    <p class="ribbon-lbl"><span id="ribbon-l"></span><span id="ribbon-r">11 días</span></p>
+  </header>
+
+  <nav class="tabs" aria-label="Secciones">
+    <a href="#hoy" data-view="hoy">Hoy</a>
+    <a href="#itinerario" data-view="itinerario">Itinerario</a>
+    <a href="#reservas" data-view="reservas">Reservas</a>
+  </nav>
+
+  <main>
+    <section id="v-hoy">
+      <div class="seg" role="tablist" aria-label="Nivel de detalle"><button type="button" role="tab" data-mode="sum">Resumen</button><button type="button" role="tab" data-mode="det">Hora por hora</button></div>
+      <div class="next" id="next" aria-live="polite"></div>
+      <div class="days" id="days" role="group" aria-label="Días del viaje"></div>
+      <div id="day"></div>
+    </section>
+    <section id="v-itinerario" hidden><div class="seg" role="tablist" aria-label="Nivel de detalle"><button type="button" role="tab" data-mode="sum">Resumen</button><button type="button" role="tab" data-mode="det">Hora por hora</button></div><div class="all" id="all"></div></section>
+    <section id="v-reservas" class="res" hidden><div id="res"></div></section>
+  </main>
+
+  <p class="foot">Horas en hora local de cada lugar. En Europa son 6 horas más que en Colombia. Horarios de vuelos revisados contra las reservas el 1 nov 2026. Los horarios de los planes son una guía: confirmen aperturas el mismo día.</p>
+</div>
+
+<script>
+const C={ink:'#1F3B57',night:'#16293D',must:'#E8B04A',terra:'#C8553D',cream:'#FBF3E6',sea:'#2F6F7E',olive:'#5E7B45',sky:'#A9D0D2',sand:'#F2D9A2',silver:'#D8DCE1'};
+const CITY={col:C.olive,mad:C.terra,bio:C.sea,par:C.ink,dis:C.must,mon:'#4C9AAE',nic:C.must};
+
+const I={
+  plane:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 12.6v-1.2l-8-4.4V3.2C13 2.5 12.5 2 12 2s-1 .5-1 1.2V7l-8 4.4v1.2l8-2.1v4.9l-2 1.4V18l3-.8 3 .8v-1.2l-2-1.4v-4.9z" transform="rotate(90 12 12)"/></svg>',
+  bed:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19V6M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="12" r="1.6"/></svg>',
+  bag:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7v13M15 7v13"/></svg>',
+  pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;margin-top:1px"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+  copy:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M15 9V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4"/></svg>',
+  info:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  train:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;margin-top:1px"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l-2-4M15 21l2-4"/><circle cx="9" cy="14" r=".6"/><circle cx="15" cy="14" r=".6"/></svg>',
+  exit:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M9 16l-4-4 4-4M5 12h11"/></svg>'
+};
+
+function fire(cx,cy,col,r1,r2){let s='';for(let i=0;i<14;i++){const a=i/14*Math.PI*2;s+=`<line x1="${(cx+Math.cos(a)*r1).toFixed(1)}" y1="${(cy+Math.sin(a)*r1).toFixed(1)}" x2="${(cx+Math.cos(a)*r2).toFixed(1)}" y2="${(cy+Math.sin(a)*r2).toFixed(1)}" stroke="${col}" stroke-width="2.6" stroke-linecap="round"/>`;}return s+`<circle cx="${cx}" cy="${cy}" r="3" fill="${col}"/>`;}
+function stars(list){return list.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r||1.4}" fill="${C.cream}"/>`).join('');}
+function palm(x,y){let s=`<path d="M${x+12} 142 Q${x+18} 100 ${x} ${y}" stroke="#6B4F3A" stroke-width="6" fill="none" stroke-linecap="round"/>`;[-160,-120,-70,-25,20].forEach(a=>{const r=a*Math.PI/180;s+=`<ellipse cx="${(x+Math.cos(r)*20).toFixed(1)}" cy="${(y+Math.sin(r)*20+6).toFixed(1)}" rx="24" ry="6" fill="${C.olive}" transform="rotate(${a+(a<-90?180:0)} ${(x+Math.cos(r)*20).toFixed(1)} ${(y+Math.sin(r)*20+6).toFixed(1)})"/>`;});return s;}
+function planeG(x,y,rot,col){return `<g transform="translate(${x} ${y}) rotate(${rot})" fill="${col}"><ellipse cx="0" cy="0" rx="32" ry="5"/><path d="M-4 0 L-16 -22 L-9 -22 L10 0Z"/><path d="M-4 0 L-16 22 L-9 22 L10 0Z"/><path d="M-26 0 L-34 -11 L-29 -11 L-20 0Z"/><path d="M-26 0 L-34 11 L-29 11 L-20 0Z"/></g>`;}
+
+const P={
+  col:(home)=>`<rect width="400" height="180" fill="${C.sand}"/><circle cx="${home?90:300}" cy="${home?92:66}" r="34" fill="${home?C.terra:C.must}"/>
+    <path d="M0 118 Q70 68 150 103 T300 92 T400 98 V180 H0Z" fill="#8AA56A"/><path d="M0 140 Q90 104 190 130 T400 122 V180 H0Z" fill="${C.olive}"/><path d="M0 160 Q120 142 240 157 T400 150 V180 H0Z" fill="#3F5A2E"/>
+    <path d="${home?'M150 30 Q230 30 300 70':'M60 100 Q120 70 190 52'}" stroke="${C.cream}" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" fill="none"/>
+    ${home?planeG(318,80,22,C.ink):planeG(214,46,-14,C.ink)}`,
+  mad:()=>`<rect width="400" height="180" fill="${C.must}"/><circle cx="322" cy="56" r="28" fill="${C.cream}"/>
+    <rect y="140" width="400" height="40" fill="${C.terra}"/>
+    <rect x="28" y="92" width="46" height="48" fill="${C.ink}"/><path d="M28 92 A23 23 0 0 1 74 92Z" fill="${C.ink}"/><rect x="49" y="56" width="4" height="14" fill="${C.ink}"/><circle cx="51" cy="54" r="4" fill="${C.ink}"/>
+    <rect x="140" y="88" width="180" height="52" fill="${C.cream}"/>
+    ${[170,230,290].map(c=>`<rect x="${c-13}" y="110" width="26" height="30" fill="${C.ink}"/><circle cx="${c}" cy="110" r="13" fill="${C.ink}"/>`).join('')}
+    <rect x="180" y="76" width="100" height="12" fill="${C.cream}"/><polygon points="196,76 264,76 230,58" fill="${C.cream}"/><rect x="226" y="47" width="8" height="11" fill="${C.ink}"/>
+    <rect x="104" y="118" width="4" height="22" fill="${C.ink}"/><circle cx="106" cy="114" r="13" fill="${C.olive}"/><rect x="352" y="118" width="4" height="22" fill="${C.ink}"/><circle cx="354" cy="114" r="13" fill="${C.olive}"/>`,
+  bio:()=>`<rect width="400" height="180" fill="${C.sky}"/><circle cx="72" cy="46" r="22" fill="${C.must}"/>
+    <path d="M0 100 Q60 60 130 90 T270 78 T400 86 V180 H0Z" fill="${C.olive}"/>
+    <g fill="${C.silver}" stroke="#8D97A3" stroke-width="1.5"><ellipse cx="176" cy="104" rx="22" ry="30" transform="rotate(12 176 104)"/><ellipse cx="236" cy="108" rx="36" ry="20" transform="rotate(24 236 108)"/><ellipse cx="200" cy="120" rx="46" ry="16" transform="rotate(-18 200 120)"/><ellipse cx="264" cy="124" rx="40" ry="13" transform="rotate(-6 264 124)"/></g>
+    <rect x="318" y="86" width="9" height="50" fill="${C.ink}"/><path d="M300 136 Q322 116 344 136" stroke="${C.ink}" stroke-width="4" fill="none"/>
+    <rect y="136" width="400" height="44" fill="${C.sea}"/><path d="M220 150 q10 -4 20 0 t20 0 M300 162 q10 -4 20 0 t20 0" stroke="${C.sky}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  par:()=>`<rect width="400" height="180" fill="${C.ink}"/>${stars([[40,30],[90,52],[130,22],[262,34],[372,90],[300,100],[60,80],[350,20]])}
+    <circle cx="322" cy="46" r="18" fill="${C.cream}"/><circle cx="330" cy="41" r="16" fill="${C.ink}"/>
+    <path d="M0 132 h40 v-16 h30 v20 h36 v-12 h24 v8 V180 H0Z" fill="${C.night}"/><path d="M400 128 h-34 v-18 h-28 v24 h-30 v-10 h-26 V180 H400Z" fill="${C.night}"/>
+    <rect x="48" y="124" width="5" height="6" fill="${C.must}"/><rect x="82" y="128" width="5" height="6" fill="${C.must}"/><rect x="346" y="120" width="5" height="6" fill="${C.must}"/>
+    <path d="M196 18 L204 18 L210 66 L218 66 L232 116 L224 116 L238 156 L216 156 Q200 128 184 156 L162 156 L176 116 L168 116 L182 66 L190 66 Z" fill="${C.must}"/>
+    <rect x="176" y="64" width="48" height="4" fill="${C.must}"/><rect x="164" y="114" width="72" height="4" fill="${C.must}"/>
+    <rect y="154" width="400" height="26" fill="${C.night}"/>`,
+  dis:()=>`<rect width="400" height="180" fill="${C.ink}"/>${stars([[30,24],[70,96],[180,90],[240,22],[380,40],[360,128],[140,40]])}
+    ${fire(108,56,C.must,8,30)}${fire(214,34,C.cream,6,24)}${fire(318,66,C.terra,8,30)}${fire(380,22,'#7DB8C6',5,16)}
+    <path d="M0 146 Q200 124 400 146 V180 H0Z" fill="${C.night}"/>
+    <polygon points="262,118 318,118 290,96" fill="${C.terra}"/><rect x="264" y="118" width="52" height="5" fill="${C.cream}"/>
+    <rect x="270" y="123" width="3" height="16" fill="${C.cream}"/><rect x="288" y="123" width="3" height="16" fill="${C.cream}"/><rect x="306" y="123" width="3" height="16" fill="${C.cream}"/>
+    <rect x="260" y="139" width="60" height="6" fill="${C.terra}"/><circle cx="290" cy="94" r="3" fill="${C.must}"/>`,
+  mon:()=>`<rect width="400" height="180" fill="#BFDCE0"/><circle cx="350" cy="36" r="18" fill="${C.must}"/>
+    <path d="M120 128 Q220 34 330 66 T400 58 V132 H120Z" fill="#8FA77A"/>
+    ${[[210,98],[236,90],[262,84],[288,80],[316,86],[344,92],[240,112],[272,106],[306,108]].map(([x,y])=>`<rect x="${x}" y="${y}" width="20" height="14" fill="${C.cream}"/><rect x="${x}" y="${y-5}" width="20" height="5" fill="${C.terra}"/>`).join('')}
+    <path d="M0 132 V76 Q30 62 70 70 Q112 64 152 132 Z" fill="#E7D3AE"/>
+    ${[[12,58],[38,52],[64,56],[90,60]].map(([x,y])=>`<rect x="${x}" y="${y}" width="22" height="16" fill="${C.cream}"/><rect x="${x}" y="${y-6}" width="22" height="6" fill="${C.terra}"/>`).join('')}
+    <rect y="130" width="400" height="50" fill="${C.sea}"/>
+    ${[[160,144],[236,140],[312,148]].map(([x,y])=>`<g fill="${C.cream}"><path d="M${x} ${y} h48 l-8 8 h-32z"/><rect x="${x+12}" y="${y-7}" width="22" height="7"/></g><line x1="${x+24}" y1="${y-7}" x2="${x+24}" y2="${y-26}" stroke="${C.cream}" stroke-width="2"/>`).join('')}`,
+  nic:()=>`<rect width="400" height="180" fill="${C.sand}"/><circle cx="302" cy="52" r="26" fill="${C.must}"/>
+    <rect y="96" width="400" height="36" fill="#4C9AAE"/><rect y="104" width="400" height="3" fill="#7DB8C6"/><rect y="116" width="400" height="3" fill="#7DB8C6"/>
+    <rect y="132" width="400" height="12" fill="#EADCC0"/><rect y="144" width="400" height="36" fill="${C.ink}"/>
+    ${[232,272,312].map(x=>`<path d="M${x} 144 l7 -18 h5 l-5 13 h15 v5z" fill="#5B8CC8"/>`).join('')}
+    ${palm(64,64)}`
+};
+function posterHTML(d,sm){
+  const svg=d.poster==='home'?P.col(true):P[d.poster]();
+  return `<div class="poster${sm?' sm':''}"><svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Ilustración de ${d.name}">${svg}</svg><span class="d">${d.full}</span><span class="n">${d.name}</span></div>`;
+}
+
+const gm=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+
+const DAYS=[
+ {key:'2026-11-06',off:'-05:00',dow:'Vie',n:6,full:'Viernes 6 nov',poster:'col',name:'Despegue',c:'col',route:'Pereira → Bogotá → Madrid',ev:[
+  {type:'flight',time:'06:05',at:'2026-11-06T06:05:00-05:00',nx:'Vuelo Pereira → Bogotá',legs:[{from:['PEI','Pereira',''],to:['BOG','Bogotá','T1'],dep:'06:05',arr:'07:00'}],top:'Sin escalas',dur:'55 min',code:'AZ2USM',notes:['Check-in en línea desde el 4 de noviembre']},
+  {type:'warn',time:'07:00',text:'<b>7 h 35 min de espera en El Dorado.</b> El vuelo nacional y el internacional son reservas separadas: hay que recoger las maletas y volver a despacharlas para Madrid.'},
+  {type:'flight',time:'14:35',at:'2026-11-06T14:35:00-05:00',nx:'Vuelo Bogotá → Madrid',legs:[{from:['BOG','Bogotá','T1'],to:['MAD','Madrid','T4S'],dep:'14:35',arr:'06:10',plus:1}],top:'Sin escalas · noche a bordo',dur:'9 h 35 min',code:'AYRZB2',notes:['Check-in en línea desde el 4 de noviembre','Llega el sábado 7 en hora de España']}
+ ]},
+ {key:'2026-11-07',off:'+01:00',dow:'Sáb',n:7,full:'Sábado 7 nov',poster:'mad',name:'Madrid',c:'mad',route:'Centro histórico, Palacio Real, Retiro y el Prado de noche',ev:[
+  {type:'info',time:'06:10',at:'2026-11-07T06:10:00+01:00',eu:1,nx:'Llegada a Madrid, T4S',text:'<b>Llegada a Madrid, Terminal 4S.</b> En migración toman huellas y foto (registro EES) por ser la primera entrada a Europa. Puede haber fila larga.'},
+  {type:'move',time:'07:15',text:'<b>Tren Cercanías C1</b> desde la estación de la T4 (planta −1), dirección Príncipe Pío, hasta <b>Atocha</b>. 25 min, unos 2,60 €, sale cada 30 min aprox.'},
+  {type:'plan',time:'07:45',title:'Dejar las maletas en LOCK & enjoy! Atocha',tag:'ent',text:'Calle de Fúcar 23, a 8 min a pie de la estación. Abierto 24 h; se reserva la taquilla en lockandenjoy.com.',q:'LOCK & enjoy Atocha, Calle de Fúcar 23, Madrid'},
+  {type:'warn',time:'07:45',sub:'a 21:30',text:'<b>Maletas en la consigna LOCK & enjoy!</b> (Calle de Fúcar 23, abierta 24 h) hasta recogerlas en la noche.'},
+  {type:'act',s:1,title:'Día en Madrid',text:'Centro histórico, Palacio Real por dentro, Retiro y el Prado gratis en la noche.'},
+  {type:'move',time:'08:15',text:'<b>Metro L1</b> desde Antón Martín (5 min a pie), dirección Pinar de Chamartín, hasta <b>Sol</b> (2 paradas). O caminar 15 min.'},
+  {type:'plan',time:'08:45',title:'Chocolate con churros en San Ginés',text:'Desayuno clásico madrileño, a dos cuadras de Sol.',q:'Chocolatería San Ginés, Madrid'},
+  {type:'plan',time:'09:30',title:'Puerta del Sol',tag:'imp',text:'El Kilómetro 0, el Oso y el Madroño y la Real Casa de Correos.',q:'Puerta del Sol, Madrid'},
+  {type:'plan',time:'10:00',title:'Plaza Mayor',tag:'imp',text:'Entrar o salir por el Arco de Cuchilleros.',q:'Plaza Mayor, Madrid'},
+  {type:'plan',time:'10:30',title:'Mercado de San Miguel',text:'Aperitivo rápido antes del Palacio.',q:'Mercado de San Miguel, Madrid'},
+  {type:'move',time:'11:10',text:'A pie por la Calle Mayor hasta el Palacio Real (10 min).'},
+  {type:'plan',time:'11:30',title:'Palacio Real por dentro',tag:'ent',text:'Salón del Trono, Armería Real y Plaza de la Armería. Entrada con hora reservada; la visita toma 1 h 30 aprox.',q:'Palacio Real de Madrid'},
+  {type:'plan',time:'13:00',title:'Catedral de la Almudena y Plaza de Oriente',text:'Justo al lado del Palacio, con los Jardines de Sabatini.',q:'Catedral de la Almudena, Madrid'},
+  {type:'plan',time:'13:45',title:'Almuerzo',text:'Menú del día por la zona de Ópera.'},
+  {type:'move',time:'15:00',text:'<b>Metro L2</b> desde Ópera, dirección Las Rosas, hasta <b>Retiro</b> (4 paradas).'},
+  {type:'plan',time:'15:20',title:'Parque del Retiro',tag:'imp',text:'Palacio de Cristal, Estanque Grande y el monumento a Alfonso XII.',q:'Palacio de Cristal, Parque del Retiro, Madrid'},
+  {type:'plan',time:'17:30',title:'Puerta de Alcalá y Cibeles',text:'Saliendo del Retiro por la Puerta de Alcalá; se iluminan al anochecer (hacia las 18:00).',q:'Puerta de Alcalá, Madrid'},
+  {type:'plan',time:'18:30',title:'Museo del Prado',tag:'free',text:'Gratis de lunes a sábado de 18:00 a 20:00 (colección permanente): Las Meninas, Goya y El Bosco.',q:'Museo del Prado, Madrid'},
+  {type:'plan',time:'20:05',title:'Cena de tapas en el Barrio de las Letras',text:'Calle de las Huertas y Plaza de Santa Ana, a 5 min del Prado.',q:'Plaza de Santa Ana, Madrid'},
+  {type:'plan',time:'21:30',title:'Recoger las maletas',text:'LOCK & enjoy!, Calle de Fúcar 23.',q:'LOCK & enjoy Atocha, Calle de Fúcar 23, Madrid'},
+  {type:'move',time:'21:45',text:'<b>Tren Cercanías C1</b> desde Atocha, dirección Aeropuerto T4, hasta <b>Nuevos Ministerios</b> (2 paradas), y <b>Metro L8</b> dirección Aeropuerto T4 hasta <b>Barajas</b> (6 paradas). ≈ 40 min. Este trayecto no paga suplemento de aeropuerto.'},
+  {type:'stay',time:'22:30',approx:1,at:'2026-11-07T22:30:00+01:00',eu:1,nx:'Check-in Hostal Viky',name:'Hostal Viky',room:'2 adultos · 1 noche',inT:'Sáb 7 · desde 13:00',outT:'Dom 8 · hasta 12:00',addr:'Calle Marte 2, Barajas, 28042 Madrid',q:'Hostal Viky, Calle Marte 2, 28042 Madrid',via:'Booking',notes:['Avisar que el check-in será hacia las 22:30','Se paga al llegar','Metro Barajas (L8), a una parada de la T4']}
+ ]},
+ {key:'2026-11-08',off:'+01:00',dow:'Dom',n:8,full:'Domingo 8 nov',poster:'mad',name:'Madrid',c:'mad',route:'Bernabéu, El Rastro y Gran Vía · noche en Bilbao',ev:[
+  {type:'plan',time:'08:00',title:'Desayuno en Barajas'},
+  {type:'out',time:'08:30',title:'Check-out · Hostal Viky',text:'Pedir que guarden las maletas hasta las 17:30.'},
+  {type:'warn',time:'08:30',sub:'a 17:30',text:'<b>Maletas en el hostal.</b> Si no las guardan, consigna de la T4 (una parada de metro).'},
+  {type:'act',s:1,title:'Mañana en Madrid',text:'Bernabéu por fuera, El Rastro, tapas en La Latina y Gran Vía.'},
+  {type:'move',time:'08:45',text:'<b>Metro L8</b> desde Barajas, dirección Nuevos Ministerios, hasta el final (6 paradas), y <b>Metro L10</b> dirección norte (Hospital Infanta Sofía) hasta <b>Santiago Bernabéu</b> (1 parada).'},
+  {type:'plan',time:'09:15',title:'Estadio Santiago Bernabéu',tag:'out',text:'Fachada sobre el Paseo de la Castellana y la tienda oficial del Real Madrid.',q:'Estadio Santiago Bernabéu'},
+  {type:'move',time:'10:15',text:'<b>Metro L10</b> desde Santiago Bernabéu, dirección Puerta del Sur, hasta <b>Alonso Martínez</b> (3 paradas), y <b>Metro L5</b> dirección Casa de Campo hasta <b>La Latina</b> (5 paradas).'},
+  {type:'plan',time:'10:45',title:'El Rastro',tag:'imp',text:'El mercadillo de los domingos en Ribera de Curtidores y la Plaza de Cascorro.',q:'Plaza de Cascorro, Madrid'},
+  {type:'plan',time:'12:30',title:'Vermut y tapas en La Latina',text:'Cava Baja y Plaza de la Paja: el plan típico del domingo madrileño.',q:'Calle de la Cava Baja, Madrid'},
+  {type:'plan',time:'14:15',title:'Calle Mayor y Plaza de la Villa',q:'Plaza de la Villa, Madrid'},
+  {type:'plan',time:'14:45',title:'Gran Vía',tag:'imp',text:'Del Edificio Metrópolis a Callao y Plaza de España, con café de por medio.',q:'Edificio Metrópolis, Madrid'},
+  {type:'move',time:'16:30',text:'<b>Metro L10</b> desde Plaza de España, dirección Hospital Infanta Sofía, hasta <b>Nuevos Ministerios</b> (4 paradas), y <b>Metro L8</b> dirección Aeropuerto T4 hasta <b>Barajas</b> (6 paradas). Recoger las maletas.'},
+  {type:'move',time:'17:45',text:'<b>Metro L8</b> desde Barajas hasta <b>Aeropuerto T4</b> (1 parada; suplemento de aeropuerto 3 €).'},
+  {type:'flight',time:'19:45',at:'2026-11-08T19:45:00+01:00',eu:1,nx:'Vuelo Madrid → Bilbao',legs:[{from:['MAD','Madrid','T4'],to:['BIO','Bilbao',''],dep:'19:45',arr:'20:50'}],top:'Iberia IB0439 · Economy',dur:'1 h 05 min',code:'M7T5S'},
+  {type:'move',time:'21:05',text:'Bus Bizkaibus A3247 del aeropuerto al centro (≈ 20 min) o taxi.'},
+  {type:'stay',time:'21:45',approx:1,at:'2026-11-08T21:45:00+01:00',eu:1,nx:'Llegada a la habitación en Bilbao',name:'Habitación en Bilbao',room:'Anfitrión: Rubén · 2 noches',inT:'Dom 8 · desde 16:00',outT:'Mar 10 · hasta 11:00',addr:'Uriortu Kalea 30, Bilbao',q:'Uriortu Kalea 30, Bilbao',via:'Airbnb',notes:['Avisarle a Rubén que llegan hacia las 22:00','Preguntarle cómo dejar las llaves el martes a las 07:15']},
+  {type:'act',s:1,title:'Noche en Bilbao',text:'Paseo corto por la Alhóndiga.'},
+  {type:'plan',time:'22:00',title:'Paseo corto por la Alhóndiga',text:'Azkuna Zentroa (la Alhóndiga), Plaza Moyua y la Gran Vía de noche.',q:'Azkuna Zentroa, Bilbao'}
+ ]},
+ {key:'2026-11-09',off:'+01:00',dow:'Lun',n:9,full:'Lunes 9 nov',poster:'bio',name:'Bilbao',c:'bio',route:'Guggenheim, Puente Colgante, Casco Viejo y Artxanda',ev:[
+  {type:'info',text:'<b>Los lunes de noviembre el Guggenheim y el museo de San Mamés están cerrados.</b> Hoy se ven por fuera, como lo planearon.'},
+  {type:'act',s:1,title:'Día en Bilbao',text:'San Mamés, Guggenheim y Puppy, Puente Colgante, Casco Viejo y el mirador de Artxanda al atardecer.'},
+  {type:'plan',time:'08:30',title:'Desayuno en Indautxu',text:'Café y un pintxo de tortilla.'},
+  {type:'plan',time:'09:15',title:'Estadio San Mamés',tag:'out',text:'La «Catedral» del Athletic Club.',q:'Estadio San Mamés, Bilbao'},
+  {type:'plan',time:'10:00',title:'Paseo por la ría',text:'Por Abandoibarra: Palacio Euskalduna y la grúa Carola.',q:'Palacio Euskalduna, Bilbao'},
+  {type:'plan',time:'10:30',title:'Guggenheim',tag:'imp',text:'Por fuera: Puppy, la araña Mamá, Tall Tree & The Eye y el puente de La Salve.',q:'Museo Guggenheim Bilbao'},
+  {type:'move',time:'11:45',text:'Metro L1 desde Moyua hasta Areeta (≈ 20 min).'},
+  {type:'plan',time:'12:15',title:'Puente Colgante (Puente Bizkaia)',tag:'ent',text:'Patrimonio de la Humanidad. Pasarela superior y cruce en la barquilla, unos 7 €; abre de 10:00 a 19:00.',q:'Puente Bizkaia, Getxo'},
+  {type:'plan',time:'13:30',title:'Almuerzo en Portugalete',text:'Al otro lado de la ría, en el casco antiguo.',q:'Portugalete'},
+  {type:'move',time:'15:00',text:'Metro L2 desde Portugalete hasta Casco Viejo (≈ 25 min).'},
+  {type:'plan',time:'15:30',title:'Casco Viejo',tag:'imp',text:'Las Siete Calles, Catedral de Santiago, Plaza Nueva, Mercado de la Ribera y Teatro Arriaga.',q:'Plaza Nueva, Bilbao'},
+  {type:'plan',time:'17:00',title:'Puente Zubizuri',text:'Caminando hacia el funicular.',q:'Zubizuri, Bilbao'},
+  {type:'plan',time:'17:20',title:'Mirador de Artxanda',tag:'imp',text:'Subir en el Funicular de Artxanda (3 min). Atardecer hacia las 17:50 y luego la ciudad iluminada.',q:'Funicular de Artxanda, Bilbao'},
+  {type:'plan',time:'19:00',title:'Pintxos en la Plaza Nueva',text:'Los lunes algunos bares cierran: lleven dos o tres opciones.',q:'Plaza Nueva, Bilbao'},
+  {type:'move',time:'21:15',text:'Metro de Casco Viejo a Indautxu y a descansar.'}
+ ]},
+ {key:'2026-11-10',off:'+01:00',dow:'Mar',n:10,full:'Martes 10 nov',poster:'par',name:'París',c:'par',route:'Gaztelugatxe en carro · vuelo a París · Torre Eiffel de noche',ev:[
+  {type:'plan',time:'06:45',title:'Despertar y cargar el carro',text:'Las maletas viajan en el carro toda la mañana.'},
+  {type:'out',time:'07:15',title:'Check-out · Habitación en Bilbao'},
+  {type:'act',s:1,title:'Mañana: Gaztelugatxe en carro',text:'Miradores sobre el islote (sin bajar a la ermita), Bermeo o Bakio y directo al aeropuerto.'},
+  {type:'move',time:'07:15',text:'En carro a Gaztelugatxe por Mungia y Bakio (≈ 45 min).'},
+  {type:'plan',time:'08:00',title:'Miradores de San Juan de Gaztelugatxe',tag:'imp',text:'Vista del islote, el puente y la escalera desde arriba, junto al restaurante Eneperi. Sin bajar a la ermita, así que no hace falta reserva. Amanece hacia las 08:15.',q:'Restaurante Eneperi, Bermeo'},
+  {type:'plan',time:'09:00',title:'Bermeo',tag:'opt',text:'Puerto pesquero y casco antiguo, a 15 min en carro.',q:'Puerto de Bermeo'},
+  {type:'plan',time:'10:00',title:'Bakio',tag:'opt',text:'Paseo corto por la playa camino al aeropuerto.',q:'Playa de Bakio'},
+  {type:'move',time:'10:40',text:'En carro al aeropuerto de Bilbao (≈ 25 min).'},
+  {type:'plan',time:'11:15',title:'Llegar al aeropuerto',text:'Despachar las maletas con tiempo; el vuelo sale a las 13:35.'},
+  {type:'flight',time:'13:35',at:'2026-11-10T13:35:00+01:00',eu:1,nx:'Vuelo Bilbao → Madrid → París',legs:[{from:['BIO','Bilbao',''],to:['MAD','Madrid','T4'],dep:'13:35',arr:'14:45',no:'IB1100 · operado por Air Nostrum'},{from:['MAD','Madrid','T4'],to:['ORY','París Orly','T1'],dep:'16:00',arr:'18:05',no:'IB0579 · Iberia'}],conn:'Conexión de 1 h 15 min en la T4 de Madrid',top:'Iberia · 1 escala',dur:'4 h 30 min',code:'M7V0C'},
+  {type:'move',time:'18:30',text:'<b>Metro L14</b> desde la estación Aéroport d’Orly, dirección Saint-Denis Pleyel, hasta <b>Saint-Lazare</b> (≈ 30 min), y <b>Metro L12</b> dirección Mairie d’Aubervilliers hasta <b>Front Populaire</b> (≈ 15 min). Billete de aeropuerto: 13 €.'},
+  {type:'stay',time:'19:30',approx:1,at:'2026-11-10T19:30:00+01:00',eu:1,nx:'Llegada al easyHotel',name:'easyHotel Paris Nord Aubervilliers',room:'Twin Room · 3 noches',inT:'Mar 10 · desde 15:00',outT:'Vie 13 · hasta 10:00',addr:'35 rue des Gardinoux, Aubervilliers',q:'easyHotel Paris Nord Aubervilliers, 35 Rue des Gardinoux, Aubervilliers',via:'Airbnb',notes:['Metro Front Populaire (L12) a 2 minutos a pie']},
+  {type:'act',s:1,title:'Noche en París',text:'La Torre Eiffel destellando desde Trocadéro y cena cerca del Campo de Marte.'},
+  {type:'move',time:'20:15',text:'<b>Metro L12</b> dirección Mairie d’Issy hasta <b>Concorde</b>, <b>L1</b> dirección La Défense hasta <b>Franklin D. Roosevelt</b> y <b>L9</b> dirección Pont de Sèvres hasta <b>Trocadéro</b> (≈ 40 min).'},
+  {type:'plan',time:'21:00',title:'Torre Eiffel desde Trocadéro',tag:'imp',text:'La torre destella 5 minutos al comenzar cada hora después del anochecer.',q:'Place du Trocadéro, Paris'},
+  {type:'plan',time:'21:20',title:'Cena cerca del Campo de Marte',text:'Cruzar el Pont d’Iéna hasta el pie de la torre; buena zona en la rue Cler.',q:'Rue Cler, Paris'},
+  {type:'move',time:'22:45',text:'<b>Metro L8</b> desde École Militaire, dirección Pointe du Lac, hasta <b>Concorde</b>, y <b>L12</b> dirección Mairie d’Aubervilliers hasta <b>Front Populaire</b> (≈ 40 min).'}
+ ]},
+ {key:'2026-11-11',off:'+01:00',dow:'Mié',n:11,full:'Miércoles 11 nov',poster:'par',name:'París',c:'par',route:'Notre-Dame, Louvre, Campos Elíseos y la cima de la Torre Eiffel',ev:[
+  {type:'info',text:'<b>Festivo en Francia: día del Armisticio.</b> En la mañana hay ceremonia en el Arco del Triunfo y cierres en los Campos Elíseos; por eso esa zona queda para la tarde.'},
+  {type:'act',s:1,title:'Día en París',text:'Notre-Dame, Louvre por fuera, Tullerías, Campos Elíseos, Arco del Triunfo y subida a la Torre Eiffel al atardecer.'},
+  {type:'move',time:'07:45',text:'<b>Metro L12</b> dirección Mairie d’Issy hasta <b>Saint-Lazare</b> y <b>L14</b> dirección Aéroport d’Orly hasta <b>Châtelet</b> (≈ 30 min). Luego 10 min a pie.'},
+  {type:'plan',time:'08:15',title:'Notre-Dame',tag:'free',text:'Reabierta tras el incendio. Entrada gratuita; temprano hay menos fila.',q:'Cathédrale Notre-Dame de Paris'},
+  {type:'plan',time:'09:30',title:'Île de la Cité y Pont Neuf',text:'Square du Vert-Galant y la librería Shakespeare and Company.',q:'Pont Neuf, Paris'},
+  {type:'plan',time:'10:30',title:'Louvre',tag:'out',text:'La pirámide, la Cour Carrée y el Arco del Carrusel.',q:'Pyramide du Louvre, Paris'},
+  {type:'plan',time:'11:15',title:'Jardín de las Tullerías',q:'Jardin des Tuileries, Paris'},
+  {type:'plan',time:'12:00',title:'Plaza de la Concordia',text:'El obelisco y la perspectiva de los Campos Elíseos.',q:'Place de la Concorde, Paris'},
+  {type:'plan',time:'12:30',title:'Almuerzo',text:'Por la Madeleine o la rue Saint-Honoré.'},
+  {type:'plan',time:'14:00',title:'Campos Elíseos',tag:'imp',text:'Caminata hasta el Arco del Triunfo.',q:'Avenue des Champs-Élysées, Paris'},
+  {type:'plan',time:'15:00',title:'Arco del Triunfo',tag:'out',text:'Tumba del Soldado Desconocido, con las ofrendas del festivo.',q:'Arc de Triomphe, Paris'},
+  {type:'move',time:'15:40',text:'<b>Metro L6</b> desde Charles de Gaulle–Étoile, dirección Nation, hasta <b>Bir-Hakeim</b> (5 paradas).'},
+  {type:'plan',time:'16:15',title:'Subir a la Torre Eiffel',tag:'ent',text:'Hasta la cima con hora reservada. Atardecer hacia las 17:10 y la ciudad encendiéndose.',q:'Tour Eiffel, Paris'},
+  {type:'plan',time:'18:30',title:'Crucero por el Sena',tag:'opt',text:'Una hora, saliendo del pie de la torre.',q:'Bateaux Parisiens, Port de la Bourdonnais'},
+  {type:'move',time:'19:30',text:'<b>Metro L6</b> desde Bir-Hakeim, dirección Nation, hasta <b>Montparnasse–Bienvenüe</b> (6 paradas), y <b>L4</b> dirección Porte de Clignancourt hasta <b>Saint-Germain-des-Prés</b> (3 paradas).'},
+  {type:'plan',time:'19:45',title:'Cena en Saint-Germain',q:'Saint-Germain-des-Prés, Paris'},
+  {type:'move',time:'21:45',text:'<b>Metro L12</b> desde Rue du Bac o Sèvres-Babylone, dirección Mairie d’Aubervilliers, directo hasta <b>Front Populaire</b> (≈ 30 min).'}
+ ]},
+ {key:'2026-11-12',off:'+01:00',dow:'Jue',n:12,full:'Jueves 12 nov',poster:'dis',name:'Disneyland',c:'dis',route:'Día completo en Disneyland París',ev:[
+  {type:'act',s:1,title:'Día completo en Disneyland'},
+  {type:'move',time:'07:45',text:'<b>Metro L12</b> dirección Mairie d’Issy hasta <b>Saint-Lazare</b>; seguir el pasillo subterráneo hasta <b>Auber</b> y tomar el <b>RER A</b> dirección Marne-la-Vallée–Chessy hasta el final (≈ 1 h 15 en total). Billete Métro-Train-RER: 2,50 €.'},
+  {type:'plan',time:'09:00',title:'Entrada al parque',text:'Revisar el horario del día en la app de Disneyland Paris y llevar las entradas descargadas.',q:'Disneyland Paris'},
+  {type:'ticket',title:'Entradas a los Parques Disney',code:'34785670',notes:['Fecha de visita: jueves 12 de noviembre','Cuenta de la reserva: pipebambague@hotmail.com']},
+  {type:'plan',time:'09:30',title:'Fantasyland primero',text:'Las atracciones clásicas tienen menos fila a primera hora.'},
+  {type:'plan',time:'11:30',title:'Adventureland y Frontierland'},
+  {type:'plan',time:'13:00',title:'Almuerzo'},
+  {type:'plan',time:'14:00',title:'Discoveryland y Main Street',text:'Si la entrada incluye el segundo parque, este es buen momento para cruzar.'},
+  {type:'plan',time:'16:30',title:'Desfile de la tarde',text:'Confirmar la hora en la app.'},
+  {type:'plan',title:'Show nocturno frente al castillo',tag:'imp',text:'Al cierre del parque; la hora exacta aparece en la app.'},
+  {type:'move',text:'Al terminar: <b>RER A</b> dirección París hasta <b>Auber</b>, pasillo a Saint-Lazare y <b>Metro L12</b> dirección Mairie d’Aubervilliers hasta <b>Front Populaire</b> (≈ 1 h 15).'}
+ ]},
+ {key:'2026-11-13',off:'+01:00',dow:'Vie',n:13,full:'Viernes 13 nov',poster:'mon',name:'Mónaco',c:'mon',route:'Montmartre · vuelo a Niza · Montecarlo de noche',ev:[
+  {type:'out',time:'08:00',title:'Check-out · easyHotel',text:'Pedir que guarden las maletas hasta las 11:30.'},
+  {type:'act',s:1,title:'Mañana en Montmartre',text:'Sacré-Cœur, Place du Tertre y el Moulin Rouge por fuera.'},
+  {type:'move',time:'08:10',text:'<b>Metro L12</b> desde Front Populaire, dirección Mairie d’Issy, hasta <b>Abbesses</b> (6 paradas).'},
+  {type:'plan',time:'08:30',title:'Montmartre',tag:'imp',text:'El muro de los Te Quiero, Sacré-Cœur y su mirador, Place du Tertre y el Moulin Rouge por fuera, bajando hacia Blanche.',q:'Basilique du Sacré-Cœur, Paris'},
+  {type:'move',time:'11:00',text:'Desde el Moulin Rouge, 5 min a pie a <b>Pigalle</b> y <b>Metro L12</b> dirección Mairie d’Aubervilliers hasta <b>Front Populaire</b> (7 paradas). Recoger las maletas.'},
+  {type:'move',time:'11:45',text:'Al aeropuerto CDG: <b>Metro L12</b> dirección Mairie d’Issy hasta <b>Marcadet–Poissonniers</b> (3 paradas), <b>L4</b> dirección Bagneux–Lucie Aubrac hasta <b>Gare du Nord</b> (2 paradas) y <b>RER B</b> dirección Aéroport Charles de Gaulle 2 TGV hasta el final (≈ 1 h; billete de aeropuerto 13 €). En taxi, ≈ 30 min.'},
+  {type:'plan',time:'13:00',title:'Almuerzo en el aeropuerto',text:'Terminal 2F.'},
+  {type:'warn',time:'15:05',at:'2026-11-13T15:05:00+01:00',eu:1,nx:'Hora límite de check-in Air France',text:'<b>Hora límite de check-in de Air France: 15:05.</b>'},
+  {type:'flight',time:'15:45',at:'2026-11-13T15:45:00+01:00',eu:1,nx:'Vuelo París → Niza',legs:[{from:['CDG','París CDG','T2F'],to:['NCE','Niza','T2'],dep:'15:45',arr:'17:20'}],top:'Air France AF7310 · Economy',dur:'1 h 35 min',code:'ZAFJPQ'},
+  {type:'move',time:'17:45',text:'<b>Tranvía L2</b> desde Aéroport Terminal 2 hasta <b>Grand Arénas</b> (gratis en la zona del aeropuerto). Al lado está la estación <b>Nice Saint-Augustin</b>: <b>tren TER</b> dirección Ventimiglia o Menton hasta <b>Monaco–Monte-Carlo</b> (≈ 30 min, unos 7 €). Luego ≈ 15 min a pie, subiendo, hasta el hotel. Otra opción: bus Express 80 directo (≈ 1 h, unos 21 €).'},
+  {type:'stay',time:'19:00',approx:1,at:'2026-11-13T19:00:00+01:00',eu:1,nx:'Llegada a Alfred Hotels Monaco',name:'Alfred Hotels Monaco',room:'Standard room · 1 noche',inT:'Vie 13 · desde 15:00',outT:'Sáb 14 · hasta 11:00',addr:"16 avenue d'Alsace",q:"Alfred Hotels Monaco, 16 avenue d'Alsace",via:'Airbnb',notes:['Verificar: la dirección parece quedar en Beausoleil (Francia), pegado a Monte-Carlo']},
+  {type:'act',s:1,title:'Noche en Montecarlo',text:'Plaza del Casino iluminada, curva Fairmont y Port Hercule.'},
+  {type:'plan',time:'19:30',title:'Plaza del Casino de Montecarlo',tag:'imp',text:'A pie desde el hotel. El Casino, el Hôtel de Paris y el Café de Paris iluminados. Para entrar al casino: mayores de 18, pasaporte y ropa formal.',q:'Casino de Monte-Carlo'},
+  {type:'plan',time:'20:30',title:'Cena'},
+  {type:'plan',time:'21:30',title:'Curva Fairmont y Port Hercule',text:'Tramos del circuito de Fórmula 1 y los yates del puerto.',q:'Port Hercule, Monaco'}
+ ]},
+ {key:'2026-11-14',off:'+01:00',dow:'Sáb',n:14,full:'Sábado 14 nov',poster:'nic',name:'Niza',c:'nic',route:'La Roca de Mónaco y cambio de guardia · tarde y noche en Niza',ev:[
+  {type:'plan',time:'08:00',title:'Desayuno'},
+  {type:'out',time:'09:00',title:'Check-out · Alfred Hotels Monaco',text:'Dejar las maletas en recepción.'},
+  {type:'warn',time:'09:00',sub:'a 14:15',text:'<b>Maletas en la recepción del hotel</b> hasta recogerlas para ir a Niza.'},
+  {type:'act',s:1,title:'Mañana en Mónaco',text:'La Roca, la catedral y el cambio de guardia a las 11:55.'},
+  {type:'move',time:'09:15',text:'<b>Bus 1 o 2</b> desde la parada Casino, dirección Monaco-Ville, hasta el final, en la Roca (≈ 15 min). 1,50 € pagando con tarjeta en el bus.'},
+  {type:'plan',time:'09:45',title:'Catedral de Mónaco y Jardines Saint-Martin',text:'Tumbas de Grace Kelly y del príncipe Rainiero.',q:'Cathédrale de Monaco'},
+  {type:'plan',time:'10:30',title:'Museo Oceanográfico',tag:'opt',text:'Sobre el acantilado, con entrada paga.',q:'Musée Océanographique de Monaco'},
+  {type:'plan',time:'11:55',title:'Cambio de guardia en el Palacio del Príncipe',tag:'imp',text:'Todos los días a las 11:55; llegar 15 minutos antes para ver de frente.',q:'Palais Princier de Monaco'},
+  {type:'plan',time:'12:30',title:'Almuerzo en el mercado de La Condamine',text:'Bajando a pie por la rampa de la Roca.',q:'Marché de la Condamine, Monaco'},
+  {type:'plan',time:'13:30',title:'Port Hercule',text:'Paseo por el puerto y la recta del circuito.',q:'Port Hercule, Monaco'},
+  {type:'move',time:'14:15',text:'<b>Bus 1 o 2</b> hasta Casino y a pie al hotel por las maletas. Luego <b>tren TER</b> desde <b>Monaco–Monte-Carlo</b>, dirección Nice / Cannes / Grasse, hasta <b>Nice-Ville</b> (≈ 25 min). Desde la estación, ≈ 15–20 min a pie hasta el estudio (detrás del Negresco).'},
+  {type:'stay',time:'15:30',approx:1,at:'2026-11-14T15:30:00+01:00',eu:1,nx:'Check-in Nice Home Studios Lido',name:'Nice Home Studios Lido',room:'Comfort studio · 1 noche',inT:'Sáb 14 · desde 14:00',outT:'Dom 15 · hasta 11:00',addr:'4 rue du Commandant Berretta, Niza',q:'Nice Home Studios Lido, 4 Rue du Commandant Berretta, Nice',via:'Airbnb',notes:['Detrás del hotel Negresco, a 300 m del mar']},
+  {type:'act',s:1,title:'Tarde y noche en Niza',text:'Colina del Castillo al atardecer, Vieux Nice y Place Masséna.'},
+  {type:'move',time:'16:00',text:'A pie por la Promenade des Anglais hacia el este (≈ 35 min hasta la Colina del Castillo).'},
+  {type:'plan',time:'16:35',title:'Colina del Castillo',tag:'imp',text:'La mejor vista de la Bahía de los Ángeles; atardecer hacia las 17:00. En invierno el parque cierra temprano.',q:'Colline du Château, Nice'},
+  {type:'plan',time:'17:30',title:'Vieux Nice',text:'Cours Saleya, Catedral de Santa Reparata y Place Rossetti.',q:'Cours Saleya, Nice'},
+  {type:'plan',time:'19:30',title:'Cena nizarda',text:'Socca, pissaladière y ensalada nizarda.'},
+  {type:'plan',time:'21:00',title:'Place Masséna y la Promenade de noche',text:'Luego, 15 min a pie hasta el estudio.',q:'Place Masséna, Nice'}
+ ]},
+ {key:'2026-11-15',off:'+01:00',dow:'Dom',n:15,full:'Domingo 15 nov',poster:'mad',name:'Madrid',c:'mad',route:'Mañana en Niza · tarde en Madrid · vuelo de regreso en la noche',ev:[
+  {type:'act',s:1,title:'Mañana en Niza',text:'Mercado de flores del Cours Saleya y último paseo por la Promenade.'},
+  {type:'plan',time:'07:45',title:'Desayuno'},
+  {type:'plan',time:'08:15',title:'Mercado de flores del Cours Saleya',text:'A pie por la Promenade (≈ 25 min). Abre en las mañanas, excepto los lunes.',q:'Cours Saleya, Nice'},
+  {type:'plan',time:'09:15',title:'Último paseo por la Promenade',text:'Las sillas azules frente al mar, de vuelta al estudio.',q:'Promenade des Anglais, Nice'},
+  {type:'out',time:'10:15',title:'Check-out · Nice Home Studios Lido'},
+  {type:'act',time:'10:30',at:'2026-11-15T10:30:00+01:00',eu:1,nx:'Salir hacia el aeropuerto de Niza',title:'Salir hacia el aeropuerto',text:'Tranvía L2, de la parada más cercana (Alsace-Lorraine o Centre Universitaire Méditerranéen, ≈ 10 min a pie), dirección aeropuerto, hasta Aéroport Terminal 1 (≈ 20 min).'},
+  {type:'flight',time:'12:45',at:'2026-11-15T12:45:00+01:00',eu:1,nx:'Vuelo Niza → Madrid',legs:[{from:['NCE','Niza','T1'],to:['MAD','Madrid','T4'],dep:'12:45',arr:'14:45'}],top:'Iberia IB1212 · Air Nostrum',dur:'2 h',code:'JMNMF'},
+  {type:'move',time:'15:00',text:'<b>Tren Cercanías C1</b> desde la T4, dirección Príncipe Pío, hasta <b>Atocha</b> (25 min), y 8 min a pie hasta LOCK & enjoy! (Calle de Fúcar 23).'},
+  {type:'warn',time:'15:35',sub:'a 21:00',text:'<b>Maletas en LOCK & enjoy!</b> (Calle de Fúcar 23, abierta 24 h).'},
+  {type:'act',s:1,title:'Tarde en Madrid',text:'Malasaña, atardecer en el Templo de Debod y Gran Vía iluminada.'},
+  {type:'move',time:'15:50',text:'<b>Metro L1</b> desde Antón Martín, dirección Pinar de Chamartín, hasta <b>Tribunal</b> (4 paradas).'},
+  {type:'plan',time:'16:05',title:'Malasaña',text:'Plaza del Dos de Mayo, calle del Espíritu Santo y los cafés del barrio.',q:'Plaza del Dos de Mayo, Madrid'},
+  {type:'move',time:'17:05',text:'A pie hasta el Templo de Debod por Plaza de España (≈ 25 min).'},
+  {type:'plan',time:'17:35',title:'Atardecer en el Templo de Debod',tag:'imp',text:'Templo egipcio con vista a la Casa de Campo; el sol se pone hacia las 17:50.',q:'Templo de Debod, Madrid'},
+  {type:'plan',time:'18:30',title:'Gran Vía iluminada y Callao',text:'Caminando desde Plaza de España hacia Sol.',q:'Plaza del Callao, Madrid'},
+  {type:'plan',time:'19:30',title:'Última cena en Madrid',text:'Cerca de Sol o en el Mercado de San Miguel.'},
+  {type:'move',time:'20:45',text:'<b>Metro L1</b> desde Sol, dirección Valdecarros, hasta <b>Antón Martín</b> (2 paradas) y recoger las maletas.'},
+  {type:'move',time:'21:15',text:'<b>Tren Cercanías C1</b> desde Atocha, dirección Aeropuerto T4, hasta el final (≈ 25 min).'},
+  {type:'info',time:'22:25',at:'2026-11-15T22:25:00+01:00',eu:1,nx:'Estar en el aeropuerto de Madrid',text:'<b>Estar en el aeropuerto.</b> 3 horas antes del vuelo internacional. Confirmar la terminal al hacer el check-in.'},
+  {type:'flight',time:'01:25',sub:'lun 16',at:'2026-11-16T01:25:00+01:00',eu:1,nx:'Vuelo Madrid → Bogotá',legs:[{from:['MAD','Madrid',''],to:['BOG','Bogotá',''],dep:'01:25',arr:'05:50'}],top:'Sin escalas · sale la noche del domingo',dur:'10 h 25 min',code:'AYRZB2',notes:['Check-in en línea desde el 13 de noviembre','Llega en hora de Colombia']}
+ ]},
+ {key:'2026-11-16',off:'-05:00',dow:'Lun',n:16,full:'Lunes 16 nov',poster:'home',name:'De vuelta',c:'col',route:'Bogotá → Pereira',ev:[
+  {type:'info',time:'05:50',at:'2026-11-16T05:50:00-05:00',nx:'Llegada a Bogotá',text:'<b>Llegada a Bogotá.</b> Migración, recoger maletas, aduana y volver a despacharlas: el vuelo a Pereira es otra reserva.'},
+  {type:'flight',time:'09:00',at:'2026-11-16T09:00:00-05:00',nx:'Vuelo Bogotá → Pereira',legs:[{from:['BOG','Bogotá',''],to:['PEI','Pereira',''],dep:'09:00',arr:'10:05'}],top:'Sin escalas',dur:'1 h 05 min',code:'AZ2USM',notes:['Check-in en línea desde el 14 de noviembre']},
+  {type:'act',time:'10:05',title:'En casa'}
+ ]}
+];
+const PREP=[
+  ['eiffel','Comprar la subida a la cima de la Torre Eiffel para el miércoles 11 hacia las 16:00 (toureiffel.paris). Es festivo: los cupos se agotan.'],
+  ['palacio','Reservar la entrada al Palacio Real para el sábado 7 a las 11:30 (Patrimonio Nacional).'],
+  ['lock','Reservar taquillas en LOCK & enjoy! Atocha (Calle de Fúcar 23) para el sábado 7 y el domingo 15 (lockandenjoy.com).'],
+  ['viky','Avisar al Hostal Viky que el check-in será hacia las 22:30 del sábado y preguntar si guardan las maletas el domingo hasta las 17:30.'],
+  ['maletas','Preguntar al easyHotel y al hotel de Mónaco si guardan las maletas después del check-out.'],
+  ['ruben','Avisarle a Rubén que llegan hacia las 22:00 del domingo y que salen a las 07:15 del martes.'],
+  ['carro','Confirmar con quien presta el carro dónde se recoge el martes temprano y dónde se deja en el aeropuerto.'],
+  ['apps','Descargar las apps de Disneyland Paris, Bonjour RATP (billetes del metro de París) y los mapas sin conexión de cada ciudad.']
+];
+
+const fmtT=(d,tz)=>new Intl.DateTimeFormat('es-CO',{timeZone:tz,hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
+const fmtK=(d,tz)=>new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
+function todayKey(now){
+  const eu=now>=new Date('2026-11-06T23:00:00Z')&&now<new Date('2026-11-16T00:25:00Z');
+  return fmtK(now,eu?'Europe/Madrid':'America/Bogota');
+}
+function dur(ms){
+  const m=Math.max(0,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;
+  if(d>0)return `${d} d ${h} h`;
+  if(h>0)return `${h} h ${String(mm).padStart(2,'0')} min`;
+  return `${mm} min`;
+}
+const ALL=[];DAYS.forEach(d=>d.ev.forEach(e=>{
+  if(!e.at&&e.time&&/^\d\d:\d\d$/.test(e.time)&&['plan','move','out','act'].includes(e.type)){e.at=`${d.key}T${e.time}:00${d.off}`;e.eu=d.off==='+01:00'?1:0;e.nx=e.nx||e.title||e.text;}
+  if(e.at){e._d=new Date(e.at);e._day=d;ALL.push(e);}
+}));
+ALL.sort((a,b)=>a._d-b._d);
+
+const st={sel:null,mode:'sum'};
+const ROUTES='https://claude.ai/artifact/RcvcsqpeUZchYeqjRmmm9v';
+function vis(e){return st.mode==='sum'?!(e.type==='plan'||e.type==='move'):!e.s;}
+function syncSeg(){document.querySelectorAll('.seg [data-mode]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.mode===st.mode)));}
+function codeBtn(c){return `<button class="code" type="button" data-copy="${c}" aria-label="Copiar código ${c}"><span class="cv">${c}</span>${I.copy}</button>`;}
+function notes(n){return n&&n.length?`<ul class="notes">${n.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';}
+function timeCol(e){
+  if(!e.time)return '<div class="tm"></div>';
+  let sub='';
+  const parts=[];if(e.approx)parts.push('aprox.');
+  if(e.sub)parts.push(e.sub);
+  else if(e.eu&&e._d&&['flight','stay','info','warn'].includes(e.type))parts.push('COL '+fmtT(e._d,'America/Bogota'));
+  if(parts.length)sub=parts.map(x=>`<small>${x}</small>`).join('');
+  return `<div class="tm">${e.time}${sub}</div>`;
+}
+function evHTML(e){
+  let b='';
+  if(e.type==='flight'){
+    const legs=e.legs.map(l=>`<div class="leg"><div class="pt"><b>${l.from[0]}</b><small>${l.from[1]}</small><span>${l.dep}${l.from[2]?` <em>· ${l.from[2]}</em>`:''}</span></div><div class="mid">${I.plane}</div><div class="pt r"><b>${l.to[0]}</b><small>${l.to[1]}</small><span>${l.arr}${l.plus?'<sup> +1</sup>':''}${l.to[2]?` <em>· ${l.to[2]}</em>`:''}</span></div></div>${l.no?`<div class="leg-no">${l.no}</div>`:''}`);
+    b=`<div class="pass"><div class="pass-top"><span>${e.top}</span><span>${e.dur}</span></div>${legs[0]}${e.conn?`<div class="conn">${e.conn}</div>`:''}${legs.slice(1).join('')}<div class="tear"></div><div class="pass-bot"><span class="lbl">Reserva</span>${codeBtn(e.code)}</div>${notes(e.notes)}</div>`;
+  }else if(e.type==='stay'){
+    b=`<div class="stay"><div class="stay-h"><span class="ic">${I.bed}</span><div><b>${e.name}</b><small>${e.room}</small></div></div><dl><div><dt>Check-in</dt><dd>${e.inT}</dd></div><div><dt>Check-out</dt><dd>${e.outT}</dd></div></dl><a class="map" href="${gm(e.q)}" target="_blank" rel="noopener">${I.pin}<span>${e.addr}</span></a>${notes(e.notes)}<span class="via">Reservado en ${e.via}</span></div>`;
+  }else if(e.type==='warn'){
+    b=`<div class="box warn">${I.bag}<div>${e.text}</div></div>`;
+  }else if(e.type==='info'){
+    b=`<div class="box info">${I.info}<div>${e.text}</div></div>`;
+  }else if(e.type==='out'){
+    b=`<div class="out">${I.exit}<span>${e.title}${e.text?`<small>${e.text}</small>`:''}</span></div>`;
+  }else if(e.type==='plan'){
+    const T={imp:['Imperdible','t-imp'],ent:['Con entrada','t-ent'],free:['Gratis','t-free'],out:['Por fuera','t-out'],opt:['Opcional','t-opt']}[e.tag];
+    b=`<div class="plan"><b>${e.title}${T?` <span class="tag ${T[1]}">${T[0]}</span>`:''}</b>${e.text?`<span>${e.text}</span>`:''}${e.q?`<a class="map sm" href="${gm(e.q)}" target="_blank" rel="noopener">${I.pin}<span>Ver en el mapa</span></a>`:''}</div>`;
+  }else if(e.type==='move'){
+    b=`<div class="move">${I.train}<span>${e.text}</span></div>`;
+  }else if(e.type==='ticket'){
+    b=`<div class="ticket"><div class="pass-top"><span>Disneyland París</span><span>Jue 12 nov</span></div><div class="tk"><b>${e.title}</b><span class="lbl">N.º reserva</span>${codeBtn(e.code)}</div><div class="tear"></div><div style="height:10px"></div>${notes(e.notes)}</div>`;
+  }else{
+    b=`<div class="act"><b>${e.title}</b>${e.text?`<span>${e.text}</span>`:''}</div>`;
+  }
+  return `<div class="ev">${timeCol(e)}<div class="body">${b}</div></div>`;
+}
+function dayHTML(d,sm){
+  const rid='d'+String(d.n).padStart(2,'0');
+  const link=st.mode==='det'&&d.n>=7&&d.n<=15?`<a class="map sm rlink" href="${ROUTES}#${rid}" target="_blank" rel="noopener">${I.pin}<span>Rutas del día en Google Maps</span></a>`:'';
+  return `${posterHTML(d,sm)}<p class="route">${d.route}</p>${link}<div class="evs">${d.ev.filter(vis).map(evHTML).join('')}</div>`;
+}
+
+function renderNext(){
+  const now=new Date(),box=document.getElementById('next');
+  const nx=ALL.filter(vis).find(e=>e._d>now);
+  if(!nx){box.innerHTML=`<p class="eyebrow">Viaje completado</p><p class="count">En casa</p><p class="when">Bienvenidos de vuelta a Pereira.</p>`;return;}
+  const first=nx===ALL[0];
+  const d=nx._day;
+  const local=`${d.dow} ${nx._d.toLocaleDateString('es-CO',{timeZone:nx.eu?'Europe/Madrid':'America/Bogota',day:'numeric'})} nov · ${fmtT(nx._d,nx.eu?'Europe/Madrid':'America/Bogota')}`;
+  const col=nx.eu&&['flight','stay','info','warn'].includes(nx.type)?` · Colombia ${fmtT(nx._d,'America/Bogota')}`:'';
+  let chips='';
+  if(nx.type==='flight'&&nx.legs[0].from[2])chips+=`<span class="chip">Terminal ${nx.legs[0].from[2]}</span>`;
+  if(nx.code)chips+=`<button class="chip" type="button" data-copy="${nx.code}" aria-label="Copiar código ${nx.code}"><span class="mono cv">${nx.code}</span>${I.copy}</button>`;
+  if(nx.q)chips+=`<a class="chip gold" href="${gm(nx.q)}" target="_blank" rel="noopener">${I.pin}Cómo llegar</a>`;
+  chips+=`<button class="chip" type="button" data-go="${d.key}">Ver el día</button>`;
+  box.innerHTML=`<p class="eyebrow">${first?'Faltan para el primer vuelo':'Lo próximo · en'}</p><div class="count">${dur(nx._d-now)}</div><p class="what">${nx.nx}</p><p class="when">${local}${col}</p><div class="chips">${chips}</div>`;
+}
+function renderRibbon(){
+  const k=todayKey(new Date()),r=document.getElementById('ribbon');
+  const idx=DAYS.findIndex(d=>d.key===k);
+  r.innerHTML=DAYS.map((d,i)=>`<span style="background:${CITY[d.c]}" class="${idx>i||k>DAYS[DAYS.length-1].key?'done':''}${idx===i?' now':''}"></span>`).join('');
+  const L=document.getElementById('ribbon-l');
+  if(k<DAYS[0].key){const n=Math.round((new Date(DAYS[0].key+'T00:00:00')-new Date(k+'T00:00:00'))/864e5);L.textContent=n===1?'Falta 1 día':`Faltan ${n} días`;}
+  else if(idx>=0)L.textContent=`Día ${idx+1} de 11 · ${DAYS[idx].name}`;
+  else L.textContent='Viaje completado';
+}
+function renderDays(){
+  const k=todayKey(new Date());
+  document.getElementById('days').innerHTML=DAYS.map(d=>`<button class="day" type="button" data-day="${d.key}" aria-pressed="${d.key===st.sel}">${d.key===k?'<span class="today" title="Hoy"></span>':''}<span class="dw">${d.dow}</span><span class="dn">${d.n}</span><span class="bar" style="background:${CITY[d.c]}"></span></button>`).join('');
+  const d=DAYS.find(x=>x.key===st.sel);
+  document.getElementById('day').innerHTML=dayHTML(d);
+}
+function renderAll(){document.getElementById('all').innerHTML=DAYS.map(d=>`<section>${dayHTML(d,true)}</section>`).join('');}
+function renderRes(){
+  const F=[
+    ['AZ2USM','Pereira ⇄ Bogotá','Ida vie 6 nov 06:05 · regreso lun 16 nov 09:00'],
+    ['AYRZB2','Bogotá ⇄ Madrid','Ida vie 6 nov 14:35 · regreso lun 16 nov 01:25 (noche del dom 15)'],
+    ['M7T5S','Madrid → Bilbao','Dom 8 nov 19:45 · IB0439 · T4'],
+    ['M7V0C','Bilbao → Madrid → París Orly','Mar 10 nov 13:35 · IB1100 + IB0579'],
+    ['ZAFJPQ','París CDG → Niza','Vie 13 nov 15:45 · AF7310 · T2F'],
+    ['JMNMF','Niza → Madrid','Dom 15 nov 12:45 · IB1212 · T1']
+  ];
+  const S=[];DAYS.forEach(d=>d.ev.forEach(e=>{if(e.type==='stay')S.push(e);}));
+  let done={};try{done=JSON.parse(localStorage.getItem('prep')||'{}')||{};}catch(_){}
+  document.getElementById('res').innerHTML=
+   `<h2>Antes de viajar</h2><div class="prep">${PREP.map(([k,t])=>`<label class="chk"><input type="checkbox" id="prep-${k}" data-prep="${k}"${done[k]?' checked':''}><span>${t}</span></label>`).join('')}</div>
+    <h2>Rutas</h2><div class="row"><div><b>Rutas de cada día en Google Maps</b><small>Tramos a pie, en transporte público y en carro, del 7 al 15 de noviembre.</small></div><a class="chip gold" href="${ROUTES}" target="_blank" rel="noopener">Abrir</a></div>
+    <h2>Vuelos</h2>${F.map(f=>`<div class="row"><div><b>${f[1]}</b><small>${f[2]}</small></div>${codeBtn(f[0])}</div>`).join('')}
+    <h2>Alojamientos</h2>${S.map(s=>`<div class="row"><div><b>${s.name}</b><small>${s.inT} → ${s.outT} · ${s.via}</small><a class="map" href="${gm(s.q)}" target="_blank" rel="noopener">${I.pin}<span>${s.addr}</span></a></div><span></span></div>`).join('')}
+    <h2>Disneyland París</h2><div class="row"><div><b>Entradas a los Parques Disney</b><small>Jue 12 nov · cuenta pipebambague@hotmail.com</small></div>${codeBtn('34785670')}</div>`;
+}
+
+const VIEWS=['hoy','itinerario','reservas'];
+function show(){
+  let v=(location.hash||'').slice(1);if(!VIEWS.includes(v))v='hoy';
+  VIEWS.forEach(x=>{document.getElementById('v-'+x).hidden=x!==v;});
+  document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.view===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+}
+function scrollSelIntoView(){const b=document.querySelector('.day[aria-pressed="true"]');if(b&&b.parentElement){const p=b.parentElement;p.scrollLeft=b.offsetLeft-p.clientWidth/2+b.clientWidth/2;}}
+
+document.addEventListener('click',ev=>{
+  const c=ev.target.closest('[data-copy]');
+  if(c){const code=c.dataset.copy;const done=()=>{const cv=c.querySelector('.cv');const old=cv.textContent;cv.textContent='Copiado';c.classList.add('done');setTimeout(()=>{cv.textContent=old;c.classList.remove('done');},1400);};
+    try{navigator.clipboard.writeText(code).then(done).catch(()=>sel(c));}catch(_){sel(c);}return;}
+  const g=ev.target.closest('[data-go]');
+  if(g){st.sel=g.dataset.go;renderDays();scrollSelIntoView();document.getElementById('days').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const m=ev.target.closest('[data-mode]');
+  if(m){st.mode=m.dataset.mode;syncSeg();renderNext();renderDays();renderAll();return;}
+  const d=ev.target.closest('[data-day]');
+  if(d){st.sel=d.dataset.day;renderDays();scrollSelIntoView();}
+});
+function sel(c){const cv=c.querySelector('.cv');const r=document.createRange();r.selectNodeContents(cv);const s=getSelection();s.removeAllRanges();s.addRange(r);}
+
+(function init(){
+  const k=todayKey(new Date());
+  st.sel=DAYS.some(d=>d.key===k)?k:(k<DAYS[0].key?DAYS[0].key:DAYS[DAYS.length-1].key);
+  syncSeg();renderRibbon();renderNext();renderDays();renderAll();renderRes();show();scrollSelIntoView();
+  addEventListener('hashchange',show);
+  document.addEventListener('change',ev=>{const c=ev.target.closest('[data-prep]');if(!c)return;try{const o=JSON.parse(localStorage.getItem('prep')||'{}')||{};o[c.dataset.prep]=c.checked;localStorage.setItem('prep',JSON.stringify(o));}catch(_){}});
+  setInterval(()=>{renderNext();renderRibbon();},30000);
+})();
+</script>
