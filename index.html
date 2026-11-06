@@ -161,36 +161,98 @@ a{color:inherit}
 .foot{margin-top:36px;font-size:12px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:12px}
 @media (max-width:380px){.top h1{font-size:38px}.pt b{font-size:26px}.next .count{font-size:32px}}
 @media (prefers-reduced-motion:no-preference){.code,.chip,.day{transition:background-color .15s,color .15s}}
+
+/* ---- Mobile-first refinements ---- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-size:15.5px}
+.wrap{padding-block:14px calc(88px + env(safe-area-inset-bottom,0px))}
+.top-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.top h1{font-size:34px;margin:4px 0 0}
+.ribbon-lbl{font-size:12.5px;color:var(--ink-2);margin:0 0 4px;text-align:right;font-weight:600}
+.ribbon{margin:12px 0 16px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tb-in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:60px;text-decoration:none;color:var(--ink-2);font-size:11.5px;font-weight:700;letter-spacing:.02em;-webkit-tap-highlight-color:transparent}
+.tabbar a[aria-current="page"]{color:var(--terra)}
+.tabbar a[aria-current="page"] span{border-bottom:2px solid var(--terra)}
+.dock{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--paper);padding:10px 0 8px;margin-top:14px;border-bottom:1px solid var(--line)}
+.dock .seg{margin:0 0 8px;width:100%}
+.dock-row{display:flex;gap:8px;align-items:center}
+.dock-row .seg{margin:0;flex:1;min-width:0}
+.dock-row .seg button{white-space:nowrap;padding:7px 8px;font-size:13.5px}
+.dock-row .chip.ghost{padding:8px 12px}
+.seg button{flex:1;min-height:40px;font-size:14px}
+.days{margin:0;padding:2px 2px 4px;scroll-snap-type:x proximity;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{min-width:50px;min-height:60px;scroll-snap-align:center;-webkit-tap-highlight-color:transparent}
+#day{scroll-margin-top:150px;padding-top:14px}
+.poster{height:150px}
+.poster .n{font-size:34px}
+.poster.sm{height:116px}
+.next{padding:16px;gap:4px}
+.next .count{font-size:34px}
+.chip{min-height:40px;padding:8px 14px;font-size:13.5px;-webkit-tap-highlight-color:transparent}
+.chip.ghost{background:var(--cream);color:var(--ink);border:1px solid var(--line);white-space:nowrap}
+.code{min-height:40px;padding:7px 11px}
+.map{padding:6px 0;min-height:36px;align-items:center}
+.map.sm{padding:4px 0;min-height:32px}
+.ev{grid-template-columns:50px minmax(0,1fr);gap:10px}
+.tm{font-size:13.5px;padding-right:8px}
+.pt b{font-size:28px}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+.pager button{min-height:58px;border:1px solid var(--line);border-radius:14px;background:var(--cream);color:var(--ink);font-weight:700;font-size:15px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding:8px 14px;cursor:pointer;text-align:left}
+.pager button.nx{align-items:flex-end;text-align:right;grid-column:2}
+.pager small{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:700}
+.hint{grid-column:1/-1;text-align:center;font-size:12px;color:var(--ink-2);margin:2px 0 0}
+.all{gap:10px;margin-top:14px}
+details.dd{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+details.dd>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;min-height:66px;-webkit-tap-highlight-color:transparent}
+details.dd>summary::-webkit-details-marker{display:none}
+.sd{flex:0 0 46px;height:46px;border-radius:12px;display:grid;place-items:center;text-align:center;line-height:1.05}
+.sd b{display:block;font-size:19px;font-variant-numeric:tabular-nums}
+.sd small{display:block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.stt{flex:1;min-width:0}
+.stt b{display:block;font-size:16px}
+.stt small{display:block;font-size:12.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{flex:0 0 auto;color:var(--ink-2)}
+details[open] .chev{transform:rotate(180deg)}
+.dd-body{padding:0 12px 16px}
+.row{padding:14px 0}
+.chk{padding:12px 0;min-height:48px}
+.chk input{width:22px;height:22px;margin-top:1px}
+@media (min-width:560px){.poster{height:190px}.poster .n{font-size:40px}.top h1{font-size:42px}.poster.sm{height:130px}}
+@media (prefers-reduced-motion:no-preference){.chev{transition:transform .2s}}
 </style>
 
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow">6 – 16 de noviembre de 2026</p>
-    <h1>Europa 2026</h1>
-    <p class="sub">Madrid · Bilbao · París · Disneyland · Mónaco · Niza</p>
+    <div class="top-row"><div><p class="eyebrow">6 – 16 nov 2026</p><h1>Europa 2026</h1></div><p class="ribbon-lbl" id="ribbon-l"></p></div>
     <div class="ribbon" id="ribbon" aria-hidden="true"></div>
-    <p class="ribbon-lbl"><span id="ribbon-l"></span><span id="ribbon-r">11 días</span></p>
   </header>
-
-  <nav class="tabs" aria-label="Secciones">
-    <a href="#hoy" data-view="hoy">Hoy</a>
-    <a href="#itinerario" data-view="itinerario">Itinerario</a>
-    <a href="#reservas" data-view="reservas">Reservas</a>
-  </nav>
 
   <main>
     <section id="v-hoy">
-      <div class="seg" role="tablist" aria-label="Nivel de detalle"><button type="button" role="tab" data-mode="sum">Resumen</button><button type="button" role="tab" data-mode="det">Hora por hora</button></div>
       <div class="next" id="next" aria-live="polite"></div>
-      <div class="days" id="days" role="group" aria-label="Días del viaje"></div>
+      <div class="dock"><div class="seg" role="tablist" aria-label="Nivel de detalle"><button type="button" role="tab" data-mode="sum">Resumen</button><button type="button" role="tab" data-mode="det">Hora por hora</button></div><div class="days" id="days" role="group" aria-label="Días del viaje"></div></div>
       <div id="day"></div>
+      <div class="pager" id="pager"></div>
     </section>
-    <section id="v-itinerario" hidden><div class="seg" role="tablist" aria-label="Nivel de detalle"><button type="button" role="tab" data-mode="sum">Resumen</button><button type="button" role="tab" data-mode="det">Hora por hora</button></div><div class="all" id="all"></div></section>
+    <section id="v-itinerario" hidden>
+      <div class="dock dock-row"><div class="seg" role="tablist" aria-label="Nivel de detalle"><button type="button" role="tab" data-mode="sum">Resumen</button><button type="button" role="tab" data-mode="det">Hora por hora</button></div><button type="button" class="chip ghost" id="expand" data-expand>Abrir todo</button></div>
+      <div class="all" id="all"></div>
+    </section>
     <section id="v-reservas" class="res" hidden><div id="res"></div></section>
   </main>
 
   <p class="foot">Horas en hora local de cada lugar. En Europa son 6 horas más que en Colombia. Horarios de vuelos revisados contra las reservas el 1 nov 2026. Los horarios de los planes son una guía: confirmen aperturas el mismo día.</p>
 </div>
+
+<nav class="tabbar" aria-label="Secciones"><div class="tb-in">
+  <a href="#hoy" data-view="hoy"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Hoy</span></a>
+  <a href="#itinerario" data-view="itinerario"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Itinerario</span></a>
+  <a href="#reservas" data-view="reservas"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg><span>Reservas</span></a>
+  <a href="https://claude.ai/artifact/RcvcsqpeUZchYeqjRmmm9v" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span>Rutas</span></a>
+</div></nav>
 
 <script>
 const C={ink:'#1F3B57',night:'#16293D',must:'#E8B04A',terra:'#C8553D',cream:'#FBF3E6',sea:'#2F6F7E',olive:'#5E7B45',sky:'#A9D0D2',sand:'#F2D9A2',silver:'#D8DCE1'};
@@ -268,13 +330,13 @@ const DAYS=[
   {type:'warn',time:'07:00',text:'<b>7 h 35 min de espera en El Dorado.</b> El vuelo nacional y el internacional son reservas separadas: hay que recoger las maletas y volver a despacharlas para Madrid.'},
   {type:'flight',time:'14:35',at:'2026-11-06T14:35:00-05:00',nx:'Vuelo Bogotá → Madrid',legs:[{from:['BOG','Bogotá','T1'],to:['MAD','Madrid','T4S'],dep:'14:35',arr:'06:10',plus:1}],top:'Sin escalas · noche a bordo',dur:'9 h 35 min',code:'AYRZB2',notes:['Check-in en línea desde el 4 de noviembre','Llega el sábado 7 en hora de España']}
  ]},
- {key:'2026-11-07',off:'+01:00',dow:'Sáb',n:7,full:'Sábado 7 nov',poster:'mad',name:'Madrid',c:'mad',route:'Centro histórico, Palacio Real, Retiro y el Prado de noche',ev:[
+ {key:'2026-11-07',off:'+01:00',dow:'Sáb',n:7,full:'Sábado 7 nov',poster:'mad',name:'Madrid',c:'mad',route:'Maletas al hostal · centro histórico, Palacio Real, Retiro y el Prado de noche',ev:[
   {type:'info',time:'06:10',at:'2026-11-07T06:10:00+01:00',eu:1,nx:'Llegada a Madrid, T4S',text:'<b>Llegada a Madrid, Terminal 4S.</b> En migración toman huellas y foto (registro EES) por ser la primera entrada a Europa. Puede haber fila larga.'},
-  {type:'move',time:'07:15',text:'<b>Tren Cercanías C1</b> desde la estación de la T4 (planta −1), dirección Príncipe Pío, hasta <b>Atocha</b>. 25 min, unos 2,60 €, sale cada 30 min aprox.'},
-  {type:'plan',time:'07:45',title:'Dejar las maletas en LOCK & enjoy! Atocha',tag:'ent',text:'Calle de Fúcar 23, a 8 min a pie de la estación. Abierto 24 h; se reserva la taquilla en lockandenjoy.com.',q:'LOCK & enjoy Atocha, Calle de Fúcar 23, Madrid'},
-  {type:'warn',time:'07:45',sub:'a 21:30',text:'<b>Maletas en la consigna LOCK & enjoy!</b> (Calle de Fúcar 23, abierta 24 h) hasta recogerlas en la noche.'},
-  {type:'act',s:1,title:'Día en Madrid',text:'Centro histórico, Palacio Real por dentro, Retiro y el Prado gratis en la noche.'},
-  {type:'move',time:'08:15',text:'<b>Metro L1</b> desde Antón Martín (5 min a pie), dirección Pinar de Chamartín, hasta <b>Sol</b> (2 paradas). O caminar 15 min.'},
+  {type:'move',time:'07:15',text:'<b>Metro L8</b> desde Aeropuerto T4, dirección Nuevos Ministerios, hasta <b>Barajas</b> (1 parada). Suplemento de aeropuerto: 3 €.'},
+  {type:'stay',time:'07:30',at:'2026-11-07T07:30:00+01:00',eu:1,nx:'Dejar las maletas en el Hostal Viky',name:'Hostal Viky',room:'2 adultos · 1 noche',inT:'Sáb 7 · desde 13:00',outT:'Dom 8 · hasta 12:00',addr:'Calle Marte 2, Barajas, 28042 Madrid',q:'Hostal Viky, Calle Marte 2, 28042 Madrid',via:'Booking',notes:['A las 07:30 solo se dejan las maletas; el check-in se hace al volver en la noche','Se paga al llegar','Metro Barajas (L8), a una parada de la T4']},
+  {type:'warn',time:'07:30',text:'<b>Confirmar antes del viaje</b> que el hostal recibe las maletas a las 07:30, antes del check-in. Si no, consigna de la T4.'},
+  {type:'act',s:1,title:'Día en Madrid',text:'Centro histórico, Palacio Real por dentro, Retiro y el Prado gratis en la noche. Regreso al hostal hacia las 22:15.'},
+  {type:'move',time:'08:00',text:'<b>Metro L8</b> desde Barajas, dirección Nuevos Ministerios, hasta el final (6 paradas); <b>L10</b> dirección Puerta del Sur hasta <b>Tribunal</b> (3 paradas); <b>L1</b> dirección Valdecarros hasta <b>Sol</b> (2 paradas). ≈ 45 min.'},
   {type:'plan',time:'08:45',title:'Chocolate con churros en San Ginés',text:'Desayuno clásico madrileño, a dos cuadras de Sol.',q:'Chocolatería San Ginés, Madrid'},
   {type:'plan',time:'09:30',title:'Puerta del Sol',tag:'imp',text:'El Kilómetro 0, el Oso y el Madroño y la Real Casa de Correos.',q:'Puerta del Sol, Madrid'},
   {type:'plan',time:'10:00',title:'Plaza Mayor',tag:'imp',text:'Entrar o salir por el Arco de Cuchilleros.',q:'Plaza Mayor, Madrid'},
@@ -288,9 +350,8 @@ const DAYS=[
   {type:'plan',time:'17:30',title:'Puerta de Alcalá y Cibeles',text:'Saliendo del Retiro por la Puerta de Alcalá; se iluminan al anochecer (hacia las 18:00).',q:'Puerta de Alcalá, Madrid'},
   {type:'plan',time:'18:30',title:'Museo del Prado',tag:'free',text:'Gratis de lunes a sábado de 18:00 a 20:00 (colección permanente): Las Meninas, Goya y El Bosco.',q:'Museo del Prado, Madrid'},
   {type:'plan',time:'20:05',title:'Cena de tapas en el Barrio de las Letras',text:'Calle de las Huertas y Plaza de Santa Ana, a 5 min del Prado.',q:'Plaza de Santa Ana, Madrid'},
-  {type:'plan',time:'21:30',title:'Recoger las maletas',text:'LOCK & enjoy!, Calle de Fúcar 23.',q:'LOCK & enjoy Atocha, Calle de Fúcar 23, Madrid'},
-  {type:'move',time:'21:45',text:'<b>Tren Cercanías C1</b> desde Atocha, dirección Aeropuerto T4, hasta <b>Nuevos Ministerios</b> (2 paradas), y <b>Metro L8</b> dirección Aeropuerto T4 hasta <b>Barajas</b> (6 paradas). ≈ 40 min. Este trayecto no paga suplemento de aeropuerto.'},
-  {type:'stay',time:'22:30',approx:1,at:'2026-11-07T22:30:00+01:00',eu:1,nx:'Check-in Hostal Viky',name:'Hostal Viky',room:'2 adultos · 1 noche',inT:'Sáb 7 · desde 13:00',outT:'Dom 8 · hasta 12:00',addr:'Calle Marte 2, Barajas, 28042 Madrid',q:'Hostal Viky, Calle Marte 2, 28042 Madrid',via:'Booking',notes:['Avisar que el check-in será hacia las 22:30','Se paga al llegar','Metro Barajas (L8), a una parada de la T4']}
+  {type:'move',time:'21:30',text:'<b>Metro L1</b> desde Antón Martín, dirección Pinar de Chamartín, hasta <b>Tribunal</b> (4 paradas); <b>L10</b> dirección Hospital Infanta Sofía hasta <b>Nuevos Ministerios</b> (3 paradas); <b>L8</b> dirección Aeropuerto T4 hasta <b>Barajas</b> (6 paradas). ≈ 45 min.'},
+  {type:'plan',time:'22:15',title:'Check-in en el Hostal Viky y a descansar'}
  ]},
  {key:'2026-11-08',off:'+01:00',dow:'Dom',n:8,full:'Domingo 8 nov',poster:'mad',name:'Madrid',c:'mad',route:'Bernabéu, El Rastro y Gran Vía · noche en Bilbao',ev:[
   {type:'plan',time:'08:00',title:'Desayuno en Barajas'},
@@ -448,8 +509,8 @@ const DAYS=[
 const PREP=[
   ['eiffel','Comprar la subida a la cima de la Torre Eiffel para el miércoles 11 hacia las 16:00 (toureiffel.paris). Es festivo: los cupos se agotan.'],
   ['palacio','Reservar la entrada al Palacio Real para el sábado 7 a las 11:30 (Patrimonio Nacional).'],
-  ['lock','Reservar taquillas en LOCK & enjoy! Atocha (Calle de Fúcar 23) para el sábado 7 y el domingo 15 (lockandenjoy.com).'],
-  ['viky','Avisar al Hostal Viky que el check-in será hacia las 22:30 del sábado y preguntar si guardan las maletas el domingo hasta las 17:30.'],
+  ['lock','Reservar una taquilla en LOCK & enjoy! Atocha (Calle de Fúcar 23) para la tarde del domingo 15 (lockandenjoy.com).'],
+  ['viky','Avisar al Hostal Viky que llegan hacia las 07:30 del sábado a dejar las maletas, que el check-in será hacia las 22:15 y preguntar si las guardan el domingo hasta las 17:30.'],
   ['maletas','Preguntar al easyHotel y al hotel de Mónaco si guardan las maletas después del check-out.'],
   ['ruben','Avisarle a Rubén que llegan hacia las 22:00 del domingo y que salen a las 07:15 del martes.'],
   ['carro','Confirmar con quien presta el carro dónde se recoge el martes temprano y dónde se deja en el aeropuerto.'],
@@ -549,8 +610,20 @@ function renderDays(){
   document.getElementById('days').innerHTML=DAYS.map(d=>`<button class="day" type="button" data-day="${d.key}" aria-pressed="${d.key===st.sel}">${d.key===k?'<span class="today" title="Hoy"></span>':''}<span class="dw">${d.dow}</span><span class="dn">${d.n}</span><span class="bar" style="background:${CITY[d.c]}"></span></button>`).join('');
   const d=DAYS.find(x=>x.key===st.sel);
   document.getElementById('day').innerHTML=dayHTML(d);
+  const i=DAYS.indexOf(d),pv=DAYS[i-1],nx=DAYS[i+1];
+  document.getElementById('pager').innerHTML=(pv?`<button type="button" data-step="-1"><small>← Anterior</small>${pv.dow} ${pv.n} · ${pv.name}</button>`:'')+(nx?`<button type="button" class="nx" data-step="1"><small>Siguiente →</small>${nx.dow} ${nx.n} · ${nx.name}</button>`:'')+'<p class="hint">También puedes deslizar el dedo a los lados para cambiar de día.</p>';
 }
-function renderAll(){document.getElementById('all').innerHTML=DAYS.map(d=>`<section>${dayHTML(d,true)}</section>`).join('');}
+function renderAll(){
+  const box=document.getElementById('all');
+  let open=new Set([...box.querySelectorAll('details.dd[open]')].map(x=>x.dataset.key));
+  if(!st.allInit){open=new Set([st.sel]);st.allInit=true;}
+  const chev='<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  box.innerHTML=DAYS.map(d=>{const light=['dis','nic'].includes(d.c);return `<details class="dd" data-key="${d.key}"${open.has(d.key)?' open':''}><summary><span class="sd" style="background:${CITY[d.c]};color:${light?C.ink:C.cream}"><span><b>${d.n}</b><small>${d.dow}</small></span></span><span class="stt"><b>${d.name}</b><small>${d.route}</small></span>${chev}</summary><div class="dd-body">${dayHTML(d,true)}</div></details>`;}).join('');
+  syncExpand();
+}
+function syncExpand(){const all=[...document.querySelectorAll('details.dd')];const b=document.getElementById('expand');if(b)b.textContent=all.length&&all.every(x=>x.open)?'Cerrar todo':'Abrir todo';}
+function go(key){st.sel=key;renderDays();scrollSelIntoView();const el=document.getElementById('day');if(el.getBoundingClientRect().top<0)el.scrollIntoView({block:'start'});}
+function step(k){const i=DAYS.findIndex(d=>d.key===st.sel),j=i+k;if(j>=0&&j<DAYS.length)go(DAYS[j].key);}
 function renderRes(){
   const F=[
     ['AZ2USM','Pereira ⇄ Bogotá','Ida vie 6 nov 06:05 · regreso lun 16 nov 09:00'],
@@ -574,7 +647,10 @@ const VIEWS=['hoy','itinerario','reservas'];
 function show(){
   let v=(location.hash||'').slice(1);if(!VIEWS.includes(v))v='hoy';
   VIEWS.forEach(x=>{document.getElementById('v-'+x).hidden=x!==v;});
-  document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.view===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+  document.querySelectorAll('.tabbar a[data-view]').forEach(a=>{if(a.dataset.view===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+  if(st.view&&st.view!==v)window.scrollTo(0,0);
+  st.view=v;
+  if(v==='hoy')scrollSelIntoView();
 }
 function scrollSelIntoView(){const b=document.querySelector('.day[aria-pressed="true"]');if(b&&b.parentElement){const p=b.parentElement;p.scrollLeft=b.offsetLeft-p.clientWidth/2+b.clientWidth/2;}}
 
@@ -583,11 +659,15 @@ document.addEventListener('click',ev=>{
   if(c){const code=c.dataset.copy;const done=()=>{const cv=c.querySelector('.cv');const old=cv.textContent;cv.textContent='Copiado';c.classList.add('done');setTimeout(()=>{cv.textContent=old;c.classList.remove('done');},1400);};
     try{navigator.clipboard.writeText(code).then(done).catch(()=>sel(c));}catch(_){sel(c);}return;}
   const g=ev.target.closest('[data-go]');
-  if(g){st.sel=g.dataset.go;renderDays();scrollSelIntoView();document.getElementById('days').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  if(g){if(location.hash&&location.hash!=='#hoy')location.hash='hoy';go(g.dataset.go);document.getElementById('day').scrollIntoView({block:'start'});return;}
+  const sp=ev.target.closest('[data-step]');
+  if(sp){step(Number(sp.dataset.step));return;}
+  const ex=ev.target.closest('[data-expand]');
+  if(ex){const all=[...document.querySelectorAll('details.dd')];const openAll=!all.every(x=>x.open);all.forEach(x=>x.open=openAll);syncExpand();return;}
   const m=ev.target.closest('[data-mode]');
   if(m){st.mode=m.dataset.mode;syncSeg();renderNext();renderDays();renderAll();return;}
   const d=ev.target.closest('[data-day]');
-  if(d){st.sel=d.dataset.day;renderDays();scrollSelIntoView();}
+  if(d){go(d.dataset.day);}
 });
 function sel(c){const cv=c.querySelector('.cv');const r=document.createRange();r.selectNodeContents(cv);const s=getSelection();s.removeAllRanges();s.addRange(r);}
 
@@ -596,6 +676,10 @@ function sel(c){const cv=c.querySelector('.cv');const r=document.createRange();r
   st.sel=DAYS.some(d=>d.key===k)?k:(k<DAYS[0].key?DAYS[0].key:DAYS[DAYS.length-1].key);
   syncSeg();renderRibbon();renderNext();renderDays();renderAll();renderRes();show();scrollSelIntoView();
   addEventListener('hashchange',show);
+  document.getElementById('all').addEventListener('toggle',syncExpand,true);
+  let sx=0,sy=0;const dz=document.getElementById('day');
+  dz.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;},{passive:true});
+  dz.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>70&&Math.abs(dy)<50)step(dx<0?1:-1);},{passive:true});
   document.addEventListener('change',ev=>{const c=ev.target.closest('[data-prep]');if(!c)return;try{const o=JSON.parse(localStorage.getItem('prep')||'{}')||{};o[c.dataset.prep]=c.checked;localStorage.setItem('prep',JSON.stringify(o));}catch(_){}});
   setInterval(()=>{renderNext();renderRibbon();},30000);
 })();
